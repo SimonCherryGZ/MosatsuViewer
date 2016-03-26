@@ -91,10 +91,17 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 					inflatedViewStub();
 					break;
 				case MSG_VIEWSTUB_OK :
-					initGallery();
+					initGallery(imgIndex);
 					break;
 				case MSG_GALLERY_OK :
 					ShowImage(imgIndex);
+					// TODO
+//					if(getResources().getConfiguration().orientation ==Configuration.ORIENTATION_PORTRAIT) {
+//						mHorizontalScrollView.smoothScrollTo(imgIndex, 0);
+//					}else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//						mScrollView.smoothScrollTo(0, imgIndex);
+//					}
+					
 					img_load.startAnimation(img_load_anim);
 					break;
 				case MSG_ANIM_END :
@@ -281,12 +288,12 @@ public class MainActivity extends Activity implements OnSeekBarChangeListener
 		}
 	}
 	
-	private void initGallery(){
+	private void initGallery(int startPos){
 		mAdapter = new HorizontalScrollViewAdapter(this, mListA);
 		if(this.getResources().getConfiguration().orientation ==Configuration.ORIENTATION_PORTRAIT) {
-			mHorizontalScrollView.initDatas(mAdapter);
+			mHorizontalScrollView.initDatas(mAdapter, startPos);
 		}else if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			mScrollView.initDatas(mAdapter);
+			mScrollView.initDatas(mAdapter, startPos);
 		}
 		myHandler.sendEmptyMessage(MSG_GALLERY_OK);
 	}

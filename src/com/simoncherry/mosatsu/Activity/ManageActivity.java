@@ -513,9 +513,14 @@ public class ManageActivity extends Activity implements OnScrollListener{
 				int bmpHeight = bmp.getHeight();
 				if(width!=0 && height!=0){
 					Matrix matrix = new Matrix();
+//					float scaleWidth = ((float)width/bmpWidth);
+//					float scaleHeight = ((float)height/bmpHeight);
+//					matrix.postScale(scaleWidth, scaleHeight);
 					float scaleWidth = ((float)width/bmpWidth);
 					float scaleHeight = ((float)height/bmpHeight);
-					matrix.postScale(scaleWidth, scaleHeight);
+					float inSampleSize = scaleWidth > scaleHeight ? scaleWidth : scaleHeight;
+					matrix.postScale(inSampleSize, inSampleSize);
+					
 					bitmap = Bitmap.createBitmap(bmp, 0, 0, bmpWidth, bmpHeight, matrix, true);
 				}else{
 					bitmap = bmp;

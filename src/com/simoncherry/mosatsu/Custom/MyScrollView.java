@@ -123,8 +123,7 @@ public class MyScrollView extends ScrollView implements
 	{
 		//*
 		// 数组边界值计算
-		if (mCurrentIndex == mAdapter.getCount() - 1)
-		{
+		if (mCurrentIndex == mAdapter.getCount() - 1){
 			return;
 		}
 		//移除第一张图片，且将水平滚动位置置0
@@ -226,7 +225,7 @@ public class MyScrollView extends ScrollView implements
 	 * 
 	 * @param mAdapter
 	 */
-	public void initDatas(HorizontalScrollViewAdapter mAdapter)
+	public void initDatas(HorizontalScrollViewAdapter mAdapter, int startPos)
 	{
 		this.mAdapter = mAdapter;
 		
@@ -252,13 +251,13 @@ public class MyScrollView extends ScrollView implements
 			mChildHeight = view.getMeasuredHeight();
 			
 			// 计算每次加载多少个View
-			/*
-			mCountOneScreen = (mScreenWitdh / mChildWidth == 0)?mScreenWitdh / mChildWidth+1:mScreenWitdh / mChildWidth+2;
-
+			// TODO
+			//mCountOneScreen = (mScreenWitdh / mChildWidth == 0)?mScreenWitdh / mChildWidth+1:mScreenWitdh / mChildWidth+2;
+			//mCountOneScreen = (mScreenHeight / mChildHeight == 0)?mScreenHeight / mChildHeight+1:mScreenHeight / mChildHeight+2;
+			mCountOneScreen = 4;
+			
 			Log.e(TAG, "mCountOneScreen = " + mCountOneScreen
 					+ " ,mChildWidth = " + mChildWidth);
-			*/
-			mCountOneScreen = (mScreenHeight / mChildHeight == 0)?mScreenHeight / mChildHeight+1:mScreenHeight / mChildHeight+2;
 			
 			//add by simon
 			if(mCountOneScreen > mCount){
@@ -266,7 +265,7 @@ public class MyScrollView extends ScrollView implements
 			}
 		}
 		//初始化第一屏幕的元素
-		initFirstScreenChildren(mCountOneScreen);
+		initFirstScreenChildren(mCount, mCountOneScreen, startPos);
 	}
 
 	/**
@@ -274,14 +273,29 @@ public class MyScrollView extends ScrollView implements
 	 * 
 	 * @param mCountOneScreen
 	 */
-	public void initFirstScreenChildren(int mCountOneScreen)
+	public void initFirstScreenChildren(int mCount, int mCountOneScreen, int startPos)
 	{
+		mFristIndex = startPos;
+		
 		mContainer = (LinearLayout) getChildAt(0);
 		mContainer.removeAllViews();
 		mViewPos.clear();
+		
+		int endPos;
 
-		for (int i = 0; i < mCountOneScreen; i++)
-		{
+		if(mCount <= mCountOneScreen){
+			endPos = mCount-1;
+		}else{
+			if(startPos + mCountOneScreen <= mCount){
+				endPos = startPos + mCountOneScreen-1;
+			}else{
+				startPos = mCount - mCountOneScreen;
+				endPos = mCount-1;
+				mFristIndex = startPos;
+			}
+		}
+
+		for (int i = startPos; i <= endPos; i++){
 			View view = mAdapter.getView(i, null, mContainer);
 			view.setOnClickListener(this);
 			mContainer.addView(view);
@@ -289,8 +303,7 @@ public class MyScrollView extends ScrollView implements
 			mCurrentIndex = i;
 		}
 
-		if (mListener != null)
-		{
+		if (mListener != null){
 			notifyCurrentImgChanged();
 		}
 

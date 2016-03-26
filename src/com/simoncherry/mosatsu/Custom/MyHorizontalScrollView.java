@@ -86,6 +86,8 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 	 * 屏幕的宽度
 	 */
 	private int mScreenWitdh;
+	
+	private int mScreenHeight;
 
 	private boolean touchLock = false;
 	/**
@@ -102,6 +104,8 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 		DisplayMetrics outMetrics = new DisplayMetrics();
 		wm.getDefaultDisplay().getMetrics(outMetrics);
 		mScreenWitdh = outMetrics.widthPixels;
+		
+		mScreenHeight = outMetrics.heightPixels;
 	}
 
 	@Override
@@ -142,8 +146,7 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 		}
 		*/
 		
-		if (mCurrentIndex == mAdapter.getCount() - 1)
-		{
+		if (mCurrentIndex == mAdapter.getCount() - 1){
 			return;
 		}
 		
@@ -158,8 +161,7 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 		
 		mFristIndex++;
 		
-		if (mListener != null)
-		{
+		if (mListener != null){
 			notifyCurrentImgChanged();
 		}
 	}
@@ -169,12 +171,12 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 	protected void loadPreImg()
 	{
 		//如果当前已经是第一张，则返回
-		if (mFristIndex == 0)
+		if (mFristIndex == 0){
 			return;
+		}
 		//获得当前应该显示为第一张图片的下标
 		int index = mCurrentIndex - mCountOneScreen;
-		if (index >= 0)
-		{
+		if (index >= 0){
 //			mContainer = (LinearLayout) getChildAt(0);
 			//移除最后一张
 			int oldViewPos = mContainer.getChildCount() - 1;
@@ -220,7 +222,7 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 	 * 
 	 * @param mAdapter
 	 */
-	public void initDatas(HorizontalScrollViewAdapter mAdapter)
+	public void initDatas(HorizontalScrollViewAdapter mAdapter, int startPos)
 	{
 		this.mAdapter = mAdapter;
 		
@@ -246,7 +248,10 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 			mChildHeight = view.getMeasuredHeight();
 			
 			// 计算每次加载多少个View
-			mCountOneScreen = (mScreenWitdh / mChildWidth == 0)?mScreenWitdh / mChildWidth+1:mScreenWitdh / mChildWidth+2;
+			// TODO 横屏时，加载数量要与竖屏时一致
+			//mCountOneScreen = (mScreenWitdh / mChildWidth == 0)?mScreenWitdh / mChildWidth+1:mScreenWitdh / mChildWidth+2;
+			//mCountOneScreen = (mScreenHeight / mChildHeight == 0)?mScreenHeight / mChildHeight+1:mScreenHeight / mChildHeight+2;
+			mCountOneScreen = 4;
 
 			Log.e(TAG, "mCountOneScreen = " + mCountOneScreen
 					+ " ,mChildWidth = " + mChildWidth);
@@ -257,7 +262,7 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 			}
 		}
 		//初始化第一屏幕的元素
-		initFirstScreenChildren(mCountOneScreen);
+		initFirstScreenChildren(mCount, mCountOneScreen, startPos);
 	}
 
 	/**
@@ -265,14 +270,28 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 	 * 
 	 * @param mCountOneScreen
 	 */
-	public void initFirstScreenChildren(int mCountOneScreen)
+	public void initFirstScreenChildren(int mCount, int mCountOneScreen, int startPos)
 	{
+		mFristIndex = startPos;
+		
 		mContainer = (LinearLayout) getChildAt(0);
 		mContainer.removeAllViews();
 		mViewPos.clear();
+		
+		int endPos;
+		
+		if(mCount <= mCountOneScreen){
+			endPos = mCount-1;
+		}else{
+			if(startPos + mCountOneScreen <= mCount){
+				endPos = startPos + mCountOneScreen-1;
+			}else{
+				startPos = mCount - mCountOneScreen;
+				endPos = mCount-1;
+			}
+		}
 
-		for (int i = 0; i < mCountOneScreen; i++)
-		{
+		for (int i = startPos; i <= endPos; i++){
 			View view = mAdapter.getView(i, null, mContainer);
 			view.setOnClickListener(this);
 			mContainer.addView(view);
@@ -280,8 +299,7 @@ public class MyHorizontalScrollView extends HorizontalScrollView implements
 			mCurrentIndex = i;
 		}
 
-		if (mListener != null)
-		{
+		if (mListener != null){
 			notifyCurrentImgChanged();
 		}
 
