@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Mosatsu</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_manage">ManageActivity</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    
+    <string name="menu_btn_start">开 始</string>
+    <string name="menu_btn_manage">设 置</string>
+    
+    <string name="manage_dialog_title">更换图片</string>
+    <string name="manage_dialog_positive">从文件夹选择</string>
+    <string name="manage_dialog_negative">取消</string>
+    
+    <string name="main_btn_last">PREVIOUS</string>
+    <string name="main_btn_next">NEXT</string>
+    <string name="main_btn_reset">RESET</string>
+    <string name="main_btn_select1">撕边：ON</string>
+    <string name="main_btn_select2">撕边：OFF</string>
+
+</resources>
