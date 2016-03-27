@@ -43,6 +43,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -106,8 +107,8 @@ public class ManageActivity extends Activity implements OnScrollListener{
 	
 	private void showAlertDialog(){
 		AlertDialog alertDialog = new AlertDialog.Builder(this)
-			.setTitle(R.string.manage_dialog_title)
-			.setPositiveButton(R.string.manage_dialog_positive, new DialogInterface.OnClickListener() {
+			.setTitle(R.string.manage_add_title)
+			.setPositiveButton(R.string.manage_add_positive, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent intent = new Intent(Intent.ACTION_GET_CONTENT, null);
@@ -115,7 +116,7 @@ public class ManageActivity extends Activity implements OnScrollListener{
 					startActivityForResult(intent, GETIMAGEPATH);
 				}
 			})
-			.setNegativeButton(R.string.manage_dialog_negative, new DialogInterface.OnClickListener() {
+			.setNegativeButton(R.string.manage_add_negative, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
@@ -286,6 +287,33 @@ public class ManageActivity extends Activity implements OnScrollListener{
 		return filePath;
 	}
 	
+	private void delItem(int pos){
+		SharedPreferences preference = getSharedPreferences(
+				"mosatsu_test", Context.MODE_PRIVATE);
+		Editor edit = preference.edit();
+		
+		int count = preference.getInt("count", 0);
+		int index = pos+1;
+		
+		if(count > 1 && index <= count-1){
+			for(int i=index; i<=count-1; i++){
+				String keyA = index2preference(i, SideA);
+				String keyB = index2preference(i, SideB);
+				String filenameA = index2filename(i+1, SideA);
+				String filenameB = index2filename(i+1, SideB);
+				edit.putString(keyA, filenameA);
+				edit.putString(keyB, filenameB);
+				edit.commit();
+			}
+		}
+		edit.putInt("count", count-1);
+		edit.commit();
+		
+		mListA.remove(pos);
+		mListB.remove(pos);
+		adapter.notifyDataSetChanged();
+	}
+	
 	private void setAdapter(){
 		adapter = new MyGridViewAdapter(this,mListA);
 		gridView.setAdapter(adapter);
@@ -307,6 +335,37 @@ public class ManageActivity extends Activity implements OnScrollListener{
 				}
 			};
 		});	
+		
+		gridView.setOnItemLongClickListener(new OnItemLongClickListener(){
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+				int item_count = gridView.getCount();
+				if(position < item_count-1){
+					AlertDialog.Builder builder = new AlertDialog.Builder(ManageActivity.this);
+	                //builder.setTitle("No." + String.valueOf(position));
+	                builder.setTitle(R.string.manage_del_title);
+	                builder.setMessage(R.string.manage_del_message);
+	                builder.setPositiveButton(R.string.manage_del_positive, new DialogInterface.OnClickListener(){
+	                    @Override
+	                    public void onClick(DialogInterface dialog, int which){
+	                    	// TODO
+	                    	delItem(position);
+	                    	dialog.dismiss();
+	                    }
+	                });
+	
+	                builder.setNegativeButton(R.string.manage_del_negative, new DialogInterface.OnClickListener(){
+	                    @Override
+	                    public void onClick(DialogInterface dialog, int which){
+	                    	dialog.dismiss();
+	                    }
+	                });
+	               
+	                builder.show();
+				}
+				return false;
+			}
+		});
 	}
 	
 	private void recycleBitmapCaches(int fromPosition, int toPosition){

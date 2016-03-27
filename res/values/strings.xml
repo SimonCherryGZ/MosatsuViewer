@@ -10,9 +10,13 @@
     <string name="menu_btn_start">开 始</string>
     <string name="menu_btn_manage">设 置</string>
     
-    <string name="manage_dialog_title">更换图片</string>
-    <string name="manage_dialog_positive">从文件夹选择</string>
-    <string name="manage_dialog_negative">取消</string>
+    <string name="manage_add_title">更换图片</string>
+    <string name="manage_add_positive">从文件夹选择</string>
+    <string name="manage_add_negative">取消</string>
+    <string name="manage_del_title">提示</string>
+    <string name="manage_del_message">删除这组图片吗？</string>
+    <string name="manage_del_positive">确定</string>
+    <string name="manage_del_negative">取消</string>
     
     <string name="main_btn_last">PREVIOUS</string>
     <string name="main_btn_next">NEXT</string>
